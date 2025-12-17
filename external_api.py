@@ -1,7 +1,7 @@
 import requests
 import time
 
-TMDB_KEY = "b8c2bd02ef0da1eeb43523a188fde2ab"
+TMDB_KEY = "YOUR_API_KEY" #upload your tmdb api key here
 TMDB_BASE = "https://api.themoviedb.org/3"
 
 
@@ -67,3 +67,4 @@ def get_movie_full(query):
 def get_tmdb_recommendations(movie_id):
     res = tmdb_get(f"movie/{movie_id}/recommendations")
     return res.get("results", []) if res else []
+
