@@ -1,34 +1,34 @@
-MovieDB 🎬
+MovieDB 
 
 A simple movie exploration web app built using Flask + TMDB API, with support for searching movies, filtering by genre/rating/year, viewing details, adding reviews & comments, and maintaining a personal watchlist.
 
 Features
 
-🔍 Movie Search
+ Movie Search
 
 Search movies by title using TMDB
 
-🎭 Filters
+ Filters
 
 Filter movies by genre, rating, and year
 
-📄 Movie Details
+ Movie Details
 
 Overview, genre, rating, director, cast, runtime
 
-⭐ Reviews
+ Reviews
 
 Add and view public 1–10 ratings
 
-💬 Comments
+ Comments
 
 Add short public comments for movies
 
-❤️ Watchlist
+ Watchlist
 
 Add/remove movies to a local watchlist
 
-🎯 Recommendations
+ Recommendations
 
 TMDB-based movie recommendations
 
@@ -79,5 +79,6 @@ http://127.0.0.1:5000/ui
 Notes
 
 This is a development project, not intended for production use.
+
 
 TMDB API key is required in external_api.py.
