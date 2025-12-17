@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Movie Explorer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    /* FILTER DROPDOWNS */
+    .filters {
+      display: flex;
+      gap: 12px;
+    }
+
+    .dropdown {
+      position: relative;
+    }
+
+    .dropbtn {
+      background: #1f2933;
+      color: #f5f5f5;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 999px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .dropbtn:hover {
+      background: #273544;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 110%;
+      left: 0;
+      background: #0f172a;
+      min-width: 140px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6);
+      z-index: 100;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: #e5e7eb;
+      cursor: pointer;
+    }
+
+    .dropdown-content a:hover {
+      background: #1e293b;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #05060b;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      color: #f5f5f5;
+    }
+
+    /* HEADER / NAVBAR */
+    .navbar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 32px;
+      background: #070814;
+      border-bottom: 1px solid #202235;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 24px;
+      color: #c084fc;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-icon {
+      width: 24px;
+      height: 24px;
+      background: #c084fc;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .search-box {
+      flex: 1;
+      display: flex;
+      gap: 8px;
+    }
+
+
+    .search-input {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: none;
+      outline: none;
+      background: #141522;
+      color: #f5f5f5;
+      font-size: 15px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: #fb5a67;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #ff7a87;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #1f2933;
+      color: #f5f5f5;
+    }
+
+    .btn-secondary:hover {
+      background: #273544;
+      transform: translateY(-1px);
+    }
+
+    /* MAIN LAYOUT */
+    .page {
+      padding: 24px 24px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #111321;
+      border-radius: 18px;
+      padding: 20px 22px;
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.45);
+      margin-bottom: 20px;
+    }
+
+    /* MOVIE CARD */
+    .movie-layout {
+      display: flex;
+      gap: 22px;
+    }
+
+    .poster {
+      width: 220px;
+      border-radius: 14px;
+      object-fit: cover;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+    }
+
+    .movie-info {
+      flex: 1;
+    }
+
+    .movie-title {
+      font-size: 30px;
+      font-weight: 700;
+      color: #d3b4ff;
+      margin-bottom: 8px;
+    }
+
+    .movie-overview {
+      margin: 10px 0 16px;
+      color: #e2e2f5;
+      line-height: 1.4;
+      font-size: 15px;
+    }
+
+    .meta-line {
+      margin: 4px 0;
+      font-size: 14px;
+    }
+
+    .meta-label {
+      color: #a855f7;
+      font-weight: 600;
+    }
+
+    .pill-row {
+      margin-top: 10px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      border-radius: 999px;
+      border: 1px solid #303552;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: #cbd5f5;
+    }
+
+    /* SECTION CARDS (reviews/comments) */
+    .section {
+      background: #111321;
+      border-radius: 18px;
+      padding: 16px 18px 14px;
+      margin-bottom: 18px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #d3d8ff;
+    }
+
+    .section-sub {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .section-body {
+      font-size: 14px;
+      color: #e5e7eb;
+    }
+
+    .section-list {
+      margin-top: 8px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .item {
+      padding: 8px 0;
+      border-bottom: 1px solid #1f2437;
+      font-size: 13px;
+    }
+
+    .item:last-child {
+      border-bottom: none;
+    }
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+
+    .item-user {
+      font-weight: 600;
+      color: #c4b5fd;
+    }
+
+    .item-meta {
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    .item-text {
+      white-space: pre-wrap;
+    }
+
+    .inline-form {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .input-sm,
+    .textarea-sm {
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      padding: 8px 10px;
+      background: #181b2d;
+      color: #e5e7eb;
+      font-size: 13px;
+    }
+
+    .input-sm {
+      min-width: 140px;
+    }
+
+    .textarea-sm {
+      flex: 1;
+      min-height: 52px;
+      resize: vertical;
+    }
+
+    /* RECOMMENDATIONS */
+    .rec-section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #d3d8ff;
+    }
+
+    .rec-row {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    .rec-card {
+      min-width: 120px;
+      background: #17192a;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      font-size: 12px;
+      color: #e5e7eb;
+      flex-shrink: 0;
+      transition: 0.18s ease;
+    }
+
+    .rec-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .rec-poster {
+      width: 120px;
+      height: 170px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .rec-title {
+      padding: 6px 7px 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* LOADING SPINNER */
+    .spinner {
+      border: 3px solid rgba(148, 163, 184, 0.25);
+      border-top: 3px solid #c084fc;
+      border-radius: 999px;
+      width: 18px;
+      height: 18px;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .center-text {
+      text-align: center;
+      color: #9ca3af;
+      font-size: 13px;
+      padding: 12px 4px;
+    }
+
+    /* WATCHLIST MODAL */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.82);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 80;
+    }
+
+    .modal {
+      background: #0f172a;
+      border-radius: 16px;
+      padding: 16px 18px;
+      width: 380px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.75);
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #e5e7eb;
+    }
+
+    .watchlist-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px solid #1e293b;
+      font-size: 13px;
+    }
+
+    .watchlist-item:last-child {
+      border-bottom: none;
+    }
+
+    .watchlist-name {
+      flex: 1;
+      margin-right: 10px;
+    }
+
+    .btn-xs {
+      padding: 5px 9px;
+      font-size: 11px;
+      border-radius: 999px;
+    }
+
+    @media (max-width: 800px) {
+      .movie-layout {
+        flex-direction: column;
+      }
+
+      .poster {
+        width: 100%;
+        max-width: 260px;
+      }
+
+      .navbar {
+        flex-wrap: wrap;
+      }
+    }
+
+    /* STREAMING PLATFORMS (TMDB) */
+    .providers-grid {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .provider-card {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #17192a;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 13px;
+    }
+
+    .provider-logo {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: #020617;
+      object-fit: contain;
+    }
+
+    .provider-name {
+      font-weight: 500;
+    }
+
+    .provider-type {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="navbar">
+    <!-- FILTER DROPDOWNS -->
+    <div class="filters">
+      <div class="dropdown">
+        <button class="dropbtn">Genre</button>
+        <div class="dropdown-content">
+          <a onclick="applyFilter({ genre: 'action' })">Action</a>
+          <a onclick="applyFilter({ genre: 'comedy' })">Comedy</a>
+          <a onclick="applyFilter({ genre: 'drama' })">Drama</a>
+          <a onclick="applyFilter({ genre: 'sci-fi' })">Sci-Fi</a>
+          <a onclick="applyFilter({ genre: 'thriller' })">Thriller</a>
+          <a onclick="applyFilter({ genre: 'romance' })">Romance</a>
+          <a onclick="applyFilter({ genre: 'horror' })">Horror</a>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button class="dropbtn">Rating</button>
+        <div class="dropdown-content">
+          <a onclick="applyFilter({ rating: 9 })">9+</a>
+          <a onclick="applyFilter({ rating: 8 })">8+</a>
+          <a onclick="applyFilter({ rating: 7 })">7+</a>
+          <a onclick="applyFilter({ rating: 6 })">6+</a>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button class="dropbtn">Year</button>
+        <div class="dropdown-content">
+          <a onclick="applyFilter({ year: 2024 })">2024</a>
+          <a onclick="applyFilter({ year: 2023 })">2023</a>
+          <a onclick="applyFilter({ year: 2022 })">2022</a>
+          <a onclick="applyFilter({ year: 2020 })">2020</a>
+          <a onclick="applyFilter({ year: 2015 })">2015</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="logo">
+      <span class="logo-icon"></span>
+      Movie Explorer
+    </div>
+    <div class="search-box">
+      <input id="searchInput" class="search-input" placeholder="Search for a movie..." />
+      <button id="searchBtn" class="btn btn-primary">Search</button>
+      <button id="watchlistBtn" class="btn btn-secondary">
+        Watchlist
+      </button>
+    </div>
+  </header>
+
+  <main class="page">
+    <!-- MAIN MOVIE CARD -->
+    <section id="movieSection" class="card" style="display:none;"></section>
+
+    <!-- REVIEWS -->
+    <section id="reviewsSection" class="section" style="display:none;">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Reviews</div>
+          <div class="section-sub">
+            Public 1–10 ratings
+          </div>
+        </div>
+      </div>
+      <div id="reviewsBody" class="section-body">
+        <div class="center-text"><span class="spinner"></span> Loading…</div>
+      </div>
+    </section>
+
+    <!-- COMMENTS -->
+    <section id="commentsSection" class="section" style="display:none;">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Comments</div>
+          <div class="section-sub">Short public notes about the movie</div>
+        </div>
+      </div>
+      <div id="commentsBody" class="section-body">
+        <div class="center-text"><span class="spinner"></span> Loading…</div>
+      </div>
+    </section>
+
+
+    <!-- RECOMMENDATIONS -->
+    <section id="recSection" class="card" style="display:none;">
+      <div class="rec-section-title">Recommended Movies</div>
+      <div id="recRow" class="rec-row"></div>
+    </section>
+  </main>
+
+  <!-- WATCHLIST MODAL -->
+  <div id="watchlistModalBg" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-title">Your Watchlist</div>
+      <div id="watchlistContainer"></div>
+      <div style="margin-top:10px; text-align:right;">
+        <button id="closeWatchlistBtn" class="btn btn-secondary btn-xs">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    /* FILTER SEARCH (GENRE / RATING / YEAR) */
+    async function applyFilter(filters) {
+      movieSection.style.display = "block";
+      movieSection.innerHTML =
+        '<div class="center-text"><span class="spinner"></span> Loading…</div>';
+
+      hideSection("reviewsSection");
+      hideSection("commentsSection");
+      hideSection("recSection");
+
+      const params = new URLSearchParams(filters);
+
+      try {
+        const res = await fetch(`/search?${params.toString()}`);
+        const data = await res.json();
+
+        if (!Array.isArray(data) || !data.length) {
+          movieSection.innerHTML =
+            '<div class="center-text">No movies found.</div>';
+          return;
+        }
+
+        movieSection.innerHTML = data
+          .slice(0, 12)
+          .map(
+            (m) => `
+              <div class="rec-card" style="margin:8px;"
+                   onclick="searchFromRecommendation('${m.title.replace(/'/g, "\\'")}')">
+                <img class="rec-poster" src="${m.poster}" />
+                <div class="rec-title">${m.title}</div>
+              </div>
+            `
+          )
+          .join("");
+      } catch (err) {
+        console.error(err);
+        movieSection.innerHTML =
+          '<div class="center-text" style="color:#fca5a5;">Failed to fetch results.</div>';
+      }
+    }
+    let currentMovie = null;      // latest /movie response
+    let currentLocalId = null;    // local DB id (for reviews / comments)
+    let isSearching = false;
+
+    const searchInput = document.getElementById("searchInput");
+    const searchBtn = document.getElementById("searchBtn");
+    const movieSection = document.getElementById("movieSection");
+
+    searchBtn.addEventListener("click", doSearch);
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") doSearch();
+    });
+
+    async function doSearch() {
+      const q = searchInput.value.trim();
+      if (!q || isSearching) return;
+
+      isSearching = true;
+      movieSection.style.display = "block";
+      movieSection.innerHTML =
+        '<div class="center-text"><span class="spinner"></span> Searching…</div>';
+
+      // reset sections
+      hideSection("reviewsSection");
+      hideSection("commentsSection");
+      hideSection("recSection");
+
+      try {
+        const res = await fetch(`/movie?q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          movieSection.innerHTML = `<div class="center-text" style="color:#fca5a5;">${data.error || "Movie not found"}</div>`;
+          currentMovie = null;
+          currentLocalId = null;
+          isSearching = false;
+          return;
+        }
+
+        currentMovie = data;
+        currentLocalId = data.local_id || null;
+
+        renderMovieCard(data);
+        loadRecommendations(data.tmdb_id);
+
+        // only try reviews/comments if we have a local id
+        if (currentLocalId) {
+          loadReviews();
+          loadComments();
+        } else {
+          hideSection("reviewsSection");
+          hideSection("commentsSection");
+        }
+      } catch (err) {
+        console.error(err);
+        movieSection.innerHTML =
+          '<div class="center-text" style="color:#fca5a5;">Error talking to backend.</div>';
+      }
+      isSearching = false;
+    }
+
+    function renderMovieCard(m) {
+      const poster = m.poster || "";
+      const title = m.title || "Unknown title";
+      const rating = m.rating != null ? m.rating.toFixed(3) : "N/A";
+
+      movieSection.style.display = "block";
+      movieSection.innerHTML = `
+        <div class="movie-layout">
+          <img class="poster" src="${poster}" alt="${title} poster" />
+
+          <div class="movie-info">
+            <div class="movie-title">${title}</div>
+            <p class="movie-overview">${m.overview || ""}</p>
+
+            <p class="meta-line">
+              <span class="meta-label">Genre:</span> ${m.genre || "N/A"}
+            </p>
+            <p class="meta-line">
+              <span class="meta-label">Rating:</span> ${rating}
+            </p>
+            <p class="meta-line">
+              <span class="meta-label">Director:</span> ${m.director || "N/A"}
+            </p>
+            <p class="meta-line">
+              <span class="meta-label">Actors:</span> ${m.actors || "N/A"}
+            </p>
+            <p class="meta-line">
+              <span class="meta-label">Runtime:</span> ${m.runtime || "N/A"}
+            </p>
+
+            <div class="pill-row">
+              <div class="pill">${m.release_date || "Unknown year"}</div>
+              <div class="pill">TMDB ID: ${m.tmdb_id}</div>
+            </div>
+
+            <div style="margin-top:18px;">
+              <button class="btn btn-primary" onclick="addToWatchlist()">
+                Add to Watchlist
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function hideSection(id) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = "none";
+    }
+
+    /* ---------------- WATCHLIST ---------------- */
+
+    const watchlistBtn = document.getElementById("watchlistBtn");
+    const watchlistModalBg = document.getElementById("watchlistModalBg");
+    const watchlistContainer = document.getElementById("watchlistContainer");
+    const closeWatchlistBtn = document.getElementById("closeWatchlistBtn");
+
+    watchlistBtn.addEventListener("click", openWatchlist);
+    closeWatchlistBtn.addEventListener("click", () => {
+      watchlistModalBg.style.display = "none";
+    });
+
+    async function addToWatchlist() {
+      if (!currentMovie || !currentMovie.title) return;
+      try {
+        await fetch("/watchlist/add", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: currentMovie.title }),
+        });
+        alert("Added to watchlist");
+      } catch (e) {
+        console.error(e);
+        alert("Failed to add to watchlist");
+      }
+    }
+
+    async function openWatchlist() {
+      watchlistModalBg.style.display = "flex";
+      watchlistContainer.innerHTML =
+        '<div class="center-text"><span class="spinner"></span> Loading…</div>';
+
+      try {
+        const res = await fetch("/watchlist");
+        const data = await res.json();
+
+        // Accept multiple shapes: ["A"], {items:[...]}, {watchlist:[...]}
+        let list = [];
+        if (Array.isArray(data)) {
+          list = data;
+        } else if (Array.isArray(data.items)) {
+          list = data.items;
+        } else if (Array.isArray(data.watchlist)) {
+          list = data.watchlist;
+        }
+
+        if (!list.length) {
+          watchlistContainer.innerHTML =
+            '<div class="center-text">Your watchlist is empty.</div>';
+          return;
+        }
+
+        watchlistContainer.innerHTML = list
+          .map(
+            (title) => `
+            <div class="watchlist-item">
+              <div class="watchlist-name">${title}</div>
+            </div>
+          `
+          )
+          .join("");
+      } catch (e) {
+        console.error(e);
+        watchlistContainer.innerHTML =
+          '<div class="center-text" style="color:#fca5a5;">Failed to load watchlist.</div>';
+      }
+    }
+
+    /* ---------------- REVIEWS ---------------- */
+
+    async function loadReviews() {
+      if (!currentLocalId) return;
+      const section = document.getElementById("reviewsSection");
+      const body = document.getElementById("reviewsBody");
+      section.style.display = "block";
+      body.innerHTML =
+        '<div class="center-text"><span class="spinner"></span> Loading…</div>';
+
+      try {
+        const res = await fetch(`/api/movies/${currentLocalId}/reviews`);
+        const data = await res.json();
+
+        const reviews = data.reviews || [];
+
+        let html = "";
+        if (!reviews.length) {
+          html += '<div class="center-text">No reviews yet.</div>';
+        } else {
+          html += '<div class="section-list">';
+          html += reviews
+            .map(
+              (r) => `
+            <div class="item">
+              <div class="item-header">
+                <span class="item-user">${r.username}</span>
+                <span class="item-meta">Score: ${r.score}/10</span>
+              </div>
+              <div class="item-text">${r.review || ""}</div>
+            </div>`
+            )
+            .join("");
+          html += "</div>";
+        }
+
+        html += `
+          <form class="inline-form" onsubmit="submitReview(event)">
+            <input class="input-sm" id="reviewUser" placeholder="Your name" required />
+            <input class="input-sm" id="reviewScore" type="number" min="1" max="10" placeholder="Score (1–10)" required />
+            <textarea class="textarea-sm" id="reviewText" placeholder="Short review..."></textarea>
+            <button class="btn btn-primary btn-xs" type="submit">Add review</button>
+          </form>
+        `;
+
+        body.innerHTML = html;
+      } catch (e) {
+        console.error(e);
+        body.innerHTML =
+          '<div class="center-text" style="color:#fca5a5;">Failed to load reviews.</div>';
+      }
+    }
+
+    async function submitReview(ev) {
+      ev.preventDefault();
+      if (!currentLocalId) return;
+      const username = document.getElementById("reviewUser").value.trim();
+      const score = parseInt(
+        document.getElementById("reviewScore").value,
+        10
+      );
+      const review = document.getElementById("reviewText").value.trim();
+
+      if (!username || !score || score < 1 || score > 10) {
+        alert("Enter a name and score 1–10");
+        return;
+      }
+
+      try {
+        await fetch(`/api/movies/${currentLocalId}/reviews`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, score, review }),
+        });
+        loadReviews();
+      } catch (e) {
+        console.error(e);
+        alert("Failed to add review");
+      }
+    }
+
+    /* ---------------- COMMENTS ---------------- */
+
+    async function loadComments() {
+      if (!currentLocalId) return;
+      const section = document.getElementById("commentsSection");
+      const body = document.getElementById("commentsBody");
+      section.style.display = "block";
+      body.innerHTML =
+        '<div class="center-text"><span class="spinner"></span> Loading…</div>';
+
+      try {
+        const res = await fetch(`/api/movies/${currentLocalId}/comments`);
+        const data = await res.json();
+        const comments = data.comments || [];
+
+        let html = "";
+        if (!comments.length) {
+          html += '<div class="center-text">No comments yet.</div>';
+        } else {
+          html += '<div class="section-list">';
+          html += comments
+            .map(
+              (c) => `
+            <div class="item">
+              <div class="item-header">
+                <span class="item-user">${c.username}</span>
+                <span class="item-meta">${c.created_at.split("T")[0]}</span>
+              </div>
+              <div class="item-text">${c.text}</div>
+            </div>`
+            )
+            .join("");
+          html += "</div>";
+        }
+
+        html += `
+          <form class="inline-form" onsubmit="submitComment(event)">
+            <input class="input-sm" id="commentUser" placeholder="Your name" required />
+            <textarea class="textarea-sm" id="commentText" placeholder="Say something…"></textarea>
+            <button class="btn btn-primary btn-xs" type="submit">Add comment</button>
+          </form>
+        `;
+
+        body.innerHTML = html;
+      } catch (e) {
+        console.error(e);
+        body.innerHTML =
+          '<div class="center-text" style="color:#fca5a5;">Failed to load comments.</div>';
+      }
+    }
+
+    async function submitComment(ev) {
+      ev.preventDefault();
+      if (!currentLocalId) return;
+
+      const username = document.getElementById("commentUser").value.trim();
+      const text = document.getElementById("commentText").value.trim();
+      if (!username || !text) {
+        alert("Enter name and comment");
+        return;
+      }
+
+      try {
+        await fetch(`/api/movies/${currentLocalId}/comments`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, text }),
+        });
+        loadComments();
+      } catch (e) {
+        console.error(e);
+        alert("Failed to add comment");
+      }
+    }
+
+    /* ---------------- RECOMMENDATIONS ---------------- */
+
+    async function loadRecommendations(tmdbId) {
+      const section = document.getElementById("recSection");
+      const row = document.getElementById("recRow");
+      if (!tmdbId) {
+        section.style.display = "none";
+        return;
+      }
+
+      section.style.display = "block";
+      row.innerHTML =
+        '<div class="center-text"><span class="spinner"></span> Loading…</div>';
+
+      try {
+        const res = await fetch(`/recommend?id=${tmdbId}`);
+        const data = await res.json();
+        const recs = Array.isArray(data) ? data : data.results || [];
+
+        if (!recs.length) {
+          row.innerHTML =
+            '<div class="center-text">No recommendations available.</div>';
+          return;
+        }
+
+        row.innerHTML = recs
+          .slice(0, 15)
+          .map((r) => {
+            const poster = r.poster_path
+              ? `https://image.tmdb.org/t/p/w200${r.poster_path}`
+              : "";
+            const title = r.title || r.name || "Untitled";
+            return `
+              <div class="rec-card" onclick="searchFromRecommendation('${title.replace(
+              /'/g,
+              "\\'"
+            )}')">
+                <img class="rec-poster" src="${poster}" alt="${title}" />
+                <div class="rec-title">${title}</div>
+              </div>`;
+          })
+          .join("");
+      } catch (e) {
+        console.error(e);
+        row.innerHTML =
+          '<div class="center-text" style="color:#fca5a5;">Failed to load recommendations.</div>';
+      }
+    }
+
+    function searchFromRecommendation(title) {
+      searchInput.value = title;
+      doSearch();
+    }
+
+  </script>
+</body>
+
+</html>
